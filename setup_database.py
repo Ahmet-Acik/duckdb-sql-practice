@@ -6,24 +6,32 @@ This script creates the HR database schema and loads sample data into DuckDB.
 import duckdb
 import os
 from pathlib import Path
+from config import DATABASE_PATH, DATABASE_CONFIG
 
-def setup_database(db_path='hr_database.duckdb'):
+def setup_database(db_path=None):
     """
     Set up the HR database with schema and data.
     
     Args:
-        db_path: Path to the DuckDB database file
+        db_path: Path to the DuckDB database file (uses config if not provided)
     """
+    if db_path is None:
+        db_path = DATABASE_PATH
+    
     # Get the project root directory
     project_root = Path(__file__).parent
     schema_file = project_root / 'data' / 'schema.sql'
     data_file = project_root / 'data' / 'data.sql'
     
-    # Connect to DuckDB
-    conn = duckdb.connect(db_path)
+    # Connect to DuckDB with configuration
+    conn = duckdb.connect(
+        database=db_path,
+        read_only=DATABASE_CONFIG.get('read_only', False),
+        config=DATABASE_CONFIG.get('config', {})
+    )
     
     try:
-        print("Setting up HR database...")
+        print(f"Setting up HR database at: {db_path}")
         
         # Read and execute schema
         print("Creating tables...")
@@ -43,7 +51,8 @@ def setup_database(db_path='hr_database.duckdb'):
         tables = ['regions', 'countries', 'locations', 'departments', 'jobs', 'employees', 'dependents']
         print("\nDatabase setup complete! Record counts:")
         for table in tables:
-            count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
+            result = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()
+            count = result[0] if result is not None else 0
             print(f"  {table}: {count} records")
             
     except Exception as e:
