@@ -1,5 +1,6 @@
 -- HR Database Schema for DuckDB
 -- This schema creates tables for regions, countries, locations, departments, jobs, employees, and dependents
+-- Note: DuckDB doesn't support CASCADE operations in foreign keys, so we use basic foreign keys
 
 CREATE TABLE regions (
 	region_id INTEGER PRIMARY KEY,
@@ -11,7 +12,7 @@ CREATE TABLE countries (
 	country_name TEXT NOT NULL,
 	region_id INTEGER NOT NULL,
 	PRIMARY KEY (country_id),
-	FOREIGN KEY (region_id) REFERENCES regions (region_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (region_id) REFERENCES regions (region_id)
 );
 
 CREATE TABLE locations (
@@ -21,14 +22,14 @@ CREATE TABLE locations (
 	city TEXT NOT NULL,
 	state_province TEXT,
 	country_id TEXT NOT NULL,
-	FOREIGN KEY (country_id) REFERENCES countries (country_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (country_id) REFERENCES countries (country_id)
 );
 
 CREATE TABLE departments (
 	department_id INTEGER PRIMARY KEY,
 	department_name TEXT NOT NULL,
 	location_id INTEGER NOT NULL,
-	FOREIGN KEY (location_id) REFERENCES locations (location_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (location_id) REFERENCES locations (location_id)
 );
 
 CREATE TABLE jobs (
@@ -49,9 +50,9 @@ CREATE TABLE employees (
 	salary DOUBLE NOT NULL,
 	manager_id INTEGER,
 	department_id INTEGER NOT NULL,
-	FOREIGN KEY (job_id) REFERENCES jobs (job_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (department_id) REFERENCES departments (department_id) ON DELETE CASCADE ON UPDATE CASCADE,
-	FOREIGN KEY (manager_id) REFERENCES employees (employee_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (job_id) REFERENCES jobs (job_id),
+	FOREIGN KEY (department_id) REFERENCES departments (department_id),
+	FOREIGN KEY (manager_id) REFERENCES employees (employee_id)
 );
 
 CREATE TABLE dependents (
@@ -60,5 +61,5 @@ CREATE TABLE dependents (
 	last_name TEXT NOT NULL,
 	relationship TEXT NOT NULL,
 	employee_id INTEGER NOT NULL,
-	FOREIGN KEY (employee_id) REFERENCES employees (employee_id) ON DELETE CASCADE ON UPDATE CASCADE
+	FOREIGN KEY (employee_id) REFERENCES employees (employee_id)
 );
