@@ -6,12 +6,25 @@ __pycache__/
 .venv/
 venv/
 .env
-# Jupyter
-.ipynb_checkpoints/
-# VSCode
-.vscode/
-# Data
+
+# Configuration files with sensitive data
+config.py
+credentials.py
+secrets.py
+
+# Database files
 *.db
 *.sqlite
+*.duckdb
 *.parquet
 *.csv
+
+# Jupyter
+.ipynb_checkpoints/
+
+# VSCode
+.vscode/
+
+# OS specific
+.DS_Store
+Thumbs.db
